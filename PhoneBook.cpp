@@ -138,7 +138,7 @@ public:
 	PhoneBook(int size);
 	~PhoneBook();
 	T& operator[](int index);
-	//friend ostream& operator<<(ostream& out, const PhoneBook& phonebook);
+	friend ostream& operator<<(ostream& out, const PhoneBook& phonebook);
 	PhoneBook& addPeople();
 	PhoneBook& delPeople();
 	int getSize() { return m_size; };
@@ -151,13 +151,13 @@ T& PhoneBook<T>::operator[](int index) {
 	if(index >= 0 && index < m_size)
 	return m_people[index];
 }
-//template<class T>
-//ostream& operator<<(ostream& out, const PhoneBook<T>& phonebook) {
-//	for (int i{ 0 }; i < phonebook.m_size; ++i) {
-//		out << phonebook[i];
-//	}
-//	return out;
-//}
+template<class T>
+ostream& operator<<(ostream& out, const PhoneBook<T>& phonebook) {
+	for (int i{ 0 }; i < phonebook.m_size; ++i) {
+		out << phonebook[i];
+	}
+	return out;
+}
 template<class T>
 PhoneBook<T>::PhoneBook() :PhoneBook(0) {}
 template<class T>
@@ -265,9 +265,15 @@ PhoneBook<T>& PhoneBook<T>::loadFile() {
 		File.seekg(0, ios::end);
 		size = File.tellg();
 		PhoneBook<People> * tmp = new PhoneBook(size/sizeof(People));
-		cout << tmp->m_size;
-		for (int i{ 0 }; i < tmp->m_size; ++i) {
-			File.read((char*)& tmp[i], sizeof(People));
+		//for (int i{ 0 }; i < tmp->m_size; ++i) {
+
+		///////////////////////////////////////////////////////////////////////
+		///Загрузка из файла не работает///
+		///////////////////////////////////////////////////////////////////////
+			while(File.read((char*)& tmp->m_people[i], sizeof(People))){
+			cout << tmp->m_people[i];
+			++i;
+			if (File.eof()) break;
 		}
 		cout << "\t\nДанные загружены." << endl;
 		File.close();
@@ -282,7 +288,7 @@ int main()
 {
 	system("chcp 1251");
 	system("cls");
-	PhoneBook<People> phonebook(3);
+	PhoneBook<People> phonebook(2);
 	//phonebook[0].setFio().setHomePhone();
 	//phonebook.saveFile();
 	phonebook.loadFile();
