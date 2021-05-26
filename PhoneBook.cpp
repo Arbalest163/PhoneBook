@@ -228,9 +228,7 @@ PhoneBook<T>& PhoneBook<T>::searchPeople() {
 	if (flag) cout << "Человека с такой фамилией не найдено!\n";
 	return *this;
 }
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//Сохранение в файл посредством метода не получилось реализовать
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 template<class T>
 PhoneBook<T>& PhoneBook<T>::saveFile() {
 	fstream File;
@@ -263,14 +261,17 @@ PhoneBook<T>& PhoneBook<T>::loadFile() {
 	}
 	else {
 		cout << "\t\nФайл успешно открыт." << endl;
-		PhoneBook<People> tmp[sizeof(File) / sizeof(People)];
-		for (int i{ 0 }; i < sizeof(File) / sizeof(People); ++i) {
+		int size = 0;
+		File.seekg(0, ios::end);
+		size = File.tellg();
+		PhoneBook<People> * tmp = new PhoneBook(size/sizeof(People));
+		cout << tmp->m_size;
+		for (int i{ 0 }; i < tmp->m_size; ++i) {
 			File.read((char*)& tmp[i], sizeof(People));
-			cout << " File:  " << sizeof(File) << "  People:  " << sizeof(People) << "  i: " << i;
 		}
 		cout << "\t\nДанные загружены." << endl;
 		File.close();
-		//delete[]m_people;
+		delete[]m_people;
 		*this = *tmp;
 		return *this;
 	}
@@ -281,14 +282,14 @@ int main()
 {
 	system("chcp 1251");
 	system("cls");
-	PhoneBook<People> phonebook(2);
+	PhoneBook<People> phonebook(3);
 	//phonebook[0].setFio().setHomePhone();
 	//phonebook.saveFile();
 	phonebook.loadFile();
 
-	/*for (int i{ 0 }; i < phonebook.getSize(); ++i)
+	for (int i{ 0 }; i < phonebook.getSize(); ++i)
 		cout << phonebook[i];
-	cout << "================================\n";
+	/*cout << "================================\n";
 	cout << "Добавляем двух человек: " << endl;
 	phonebook.addPeople();
 	phonebook.addPeople();
